@@ -1,6 +1,12 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import './App.css'
 import malikPhoto from './assets/MALIK.jpeg'
+import travelBanyuwangiImage from './assets/travel-banyuwangi.png'
+import adminTravelImage from './assets/admin-travel-banyuwangi.png'
+import stuntingMappingImage from './assets/pemetaan-madura.png'
+import gerakanBahasaIsyaratImage from './assets/pengenalan-isyarat.png'
+import ularTanggaImage from './assets/ular-tangga.png'
+import museumCakraningratImage from './assets/museum-cakraningrat.png'
 
 const projects = [
   {
@@ -9,7 +15,8 @@ const projects = [
     type: 'Website',
     description: 'Website yang menampilkan informasi tentang museum Cakraningrat di Bangkalan.',
     tech: 'Laravel · JavaScript · CSS · PHP',
-    visualClass: 'project-visual-orange',
+    visualClass: 'project-visual-blue',
+    image: museumCakraningratImage,
     year:'2024',
   },
   {
@@ -19,6 +26,7 @@ const projects = [
     description: 'Website yang menunjukkan wisata alam yang ada di Banyuwangi, penyewaan hotel, dan transportasi.',
     tech: 'React · Node · Express · PostgreSQL',
     visualClass: 'project-visual-blue',
+    image: travelBanyuwangiImage,
     year:'2025',
   },
   {
@@ -28,7 +36,38 @@ const projects = [
     description: 'Website yang menampilkan data pemetaan stunting di wilayah Madura dari tahun 2020 hingga 2024.',
     tech: 'Python · Flask · Machine Learning · Json',
     visualClass: 'project-visual-green',
+    image: stuntingMappingImage,
     year:'2025',
+  },
+  {
+    number: '04',
+    title: 'Admin Travel Banyuwangi',
+    type: 'Website',
+    description: 'Website yang menyediakan dashboard admin untuk mengelola data wisata di Banyuwangi, Hotel dan Transportasi.',
+    tech: 'React · Node · Express · PostgreSQL',
+    visualClass: 'project-visual-green',
+    image: adminTravelImage,
+    year:'2025',
+  },
+  {
+    number: '05',
+    title: 'Gerakan Bahasa Isyarat',
+    type: 'Website',
+    description: 'Website yang mengklasifikasikan video gerakan bahasa isyarat untuk mempermudah pembelajaran.',
+    tech: 'Python · Flask · Machine Learning · Keras',
+    visualClass: 'project-visual-green',
+    image: gerakanBahasaIsyaratImage,
+    year:'2026',
+  },
+  {
+    number: '06',
+    title: 'Permainan Ular Tangga',
+    type: 'Game',
+    description: 'Aplikasi permainan ular tangga yang dapat dimainkan oleh dua pemain dengan menggunakan C++.',
+    tech: 'C++',
+    visualClass: 'project-visual-green',
+    image: ularTanggaImage,
+    year:'2024',
   },
 ]
 
@@ -75,8 +114,9 @@ function App() {
 
     const distance = event.clientX - dragStartX.current
     if (Math.abs(distance) > 50) {
+      const direction = distance < 0 ? 1 : -1
       setActiveProject((current) =>
-        distance < 0
+        direction === 1
           ? (current + 1) % projects.length
           : current === 0
             ? projects.length - 1
@@ -97,9 +137,11 @@ function App() {
         </a>
 
         <div className="nav-links">
-          <a href="#about"> About</a>
-          <a href="#work"> Work</a>
-          <a href="#contact"> Contact</a>
+          <a href="#about">About</a>
+          <a href="#work">Work</a>
+          <a href="#skills">Skills</a>
+          <a href="#experience">Experience</a>
+          <a href="#contact">Contact</a>
         </div>
 
         <a className="nav-button" href="#contact">
@@ -165,9 +207,9 @@ function App() {
       <section className="intro-section reveal-section" id="about">
         <p className="section-label"></p>
         <div>
-          <h2>Saya mengubah ide menjadi pengalaman digital yang berarti.</h2>
+          <h2>Tentang Saya.</h2>
           <p className="section-text">
-            Saya adalah developer yang membangun aplikasi dari sisi backend hingga frontend, dengan perhatian khusus pada visual design dan detail kecil yang membuat sebuah produk terasa lebih hidup. Saat tidak menulis kode, saya biasanya mencari inspirasi dari internet untuk kebutuhan desain.
+            Saya adalah Lulusan S1 Teknik Informatika dari Universitas Trunodjoyo Madura. Saya memiliki pengalaman dalam mengembangkan website menggunakan berbagai teknologi seperti React, Node.js, Express, Laravel, dan Python. Saya memiliki pengalaman dalam membuat aplikasi web yang responsif dan user-friendly. Saya juga memiliki sertifikasi BNSP Junior Web Developer. Saya selalu berusaha untuk terus belajar dan mengembangkan kemampuan saya dalam bidang pengembangan web.
           </p>
         </div>
       </section>
@@ -175,7 +217,7 @@ function App() {
       <section className="work-section reveal-section" id="work">
         <div className="section-heading">
           <p className="section-label"></p>
-          <h2>Beberapa karya pilihan.</h2>
+          <h2>Beberapa Project yang telah saya buat.</h2>
         </div>
 
         <div
@@ -189,16 +231,45 @@ function App() {
         >
           <div className="project-stack">
             {projects.map((project, index) => {
-              const position =
+              const circularPosition =
                 (index - activeProject + projects.length) % projects.length
+              const position =
+                circularPosition > projects.length / 2
+                  ? circularPosition - projects.length
+                  : circularPosition
+              const distance = Math.abs(position)
+              const isVisible = distance <= 2
+              const positionClass = !isVisible
+                ? position < 0
+                  ? 'project-hidden-left'
+                  : 'project-hidden-right'
+                : position === 0
+                  ? 'project-active'
+                  : position < 0
+                    ? 'project-side-left'
+                    : 'project-side-right'
+              const cardStyle: CSSProperties = {
+                transform: isVisible
+                  ? `translate3d(${position * 42}%, 0, 0) scale(${1 - distance * 0.08})`
+                  : `translate3d(${position < 0 ? -112 : 112}%, 0, 0) scale(0.78)`,
+                opacity: isVisible ? 1 - distance * 0.2 : 0,
+                zIndex: isVisible ? projects.length - distance : 0,
+              }
 
               return (
                 <article
-                  className={`project project-slide project-position-${position}`}
+                  className={`project project-slide ${positionClass}`}
+                  style={cardStyle}
                   key={project.number}
                 >
                   <div className={`project-visual ${project.visualClass}`}>
-                    <strong>{project.title.split(' ')[0]}</strong>
+                    {project.image && (
+                      <img
+                        className="project-image"
+                        src={project.image}
+                        alt={`Preview ${project.title}`}
+                      />
+                    )}
                   </div>
 
                   <div className="project-info">
@@ -217,8 +288,11 @@ function App() {
         </div>
       </section>
 
-      <section className="skills-section reveal-section">
-        <p className="section-label"></p>
+      <section className="skills-section reveal-section" id="skills">
+        <div className="section-heading">
+          <p className="section-label"></p>
+          <h2>Keahlian yang saya kuasai.</h2>
+        </div>
         <div className="skills">
           <div className="skill-card skill-card-featured">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" alt="React" />
@@ -238,6 +312,47 @@ function App() {
           <div className="skill-card">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" />
           </div>
+          <div className="skill-card">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" alt="MySQL" />
+          </div>
+          <div className="skill-card">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" />
+          </div>
+          <div className="skill-card">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg" alt="MongoDB" />
+          </div>
+          <div className="skill-card">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" alt="C++" />
+          </div>
+          <div className="skill-card">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bootstrap/bootstrap-original.svg" alt="Bootstrap" />
+          </div>
+          <div className="skill-card">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg" alt="Spring Boot" />
+          </div>
+        </div>
+      </section>
+
+      <section className="experience-section reveal-section" id="experience">
+        <div className="section-heading">
+          <p className="section-label"></p>
+          <h2>Experience.</h2>
+        </div>
+        <div className="experience-list">
+          <article className="experience-card">
+            <div>
+              <p className="experience-type">Education</p>
+              <h3>Asisten Praktikum</h3>
+              <p>Mendampingi proses praktikum dan membantu mahasiswa memahami materi pemrograman.</p>
+            </div>
+          </article>
+          <article className="experience-card experience-card-featured">
+            <div>
+              <p className="experience-type">Development</p>
+              <h3>Fullstack Developer</h3>
+              <p>Membangun aplikasi web dari sisi frontend hingga backend dengan pengalaman pengguna yang baik.</p>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -264,9 +379,18 @@ function App() {
           <span>Building digital experiences<br />with curiosity & care.</span>
         </div>
         <div className="footer-links">
-          <a href="https://github.com/Lealwa" target="_blank" rel="noreferrer">GitHub ↗</a>
-          <a href="https://www.linkedin.com/in/malik-maulana-1680b2313/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-          <a href="https://www.instagram.com/malikk_maulanaa/" target="_blank" rel="noreferrer">Instagram ↗</a>
+          <a href="https://github.com/Lealwa" target="_blank" rel="noreferrer">
+            <img src="https://cdn.simpleicons.org/github/fff8e8" alt="" /> GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/malik-maulana-1680b2313/" target="_blank" rel="noreferrer">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" alt="" /> LinkedIn
+          </a>
+          <a href="https://www.instagram.com/malikk_maulanaa/" target="_blank" rel="noreferrer">
+            <img src="https://cdn.simpleicons.org/instagram/fff8e8" alt="" /> Instagram
+          </a>
+          <a href="https://wa.me/6287750183548" target="_blank" rel="noreferrer">
+            <img src="https://cdn.simpleicons.org/whatsapp/fff8e8" alt="" /> WhatsApp
+          </a>
         </div>
         <a className="back-to-top" href="#home">Back to top <b>↑</b></a>
         <small>© 2026 Malik Maulana</small>
